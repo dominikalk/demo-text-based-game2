@@ -24,7 +24,16 @@ def list_of_items(items):
     'money, a student handbook, laptop'
 
     """
-    pass
+    
+    items_list = ''
+
+    for i, item in enumerate(items):
+        if(i == 0):
+            items_list += item['name']
+        else:
+            items_list += f', {item["name"]}'
+
+    return items_list
 
 
 def print_room_items(room):
@@ -49,7 +58,11 @@ def print_room_items(room):
     Note: <BLANKLINE> here means that doctest should expect a blank line.
 
     """
-    pass
+    
+    if(len(room['items']) == 0):
+        return
+
+    print(f'There is {list_of_items(room["items"])} here.\n')
 
 
 def print_inventory_items(items):
@@ -62,7 +75,11 @@ def print_inventory_items(items):
     <BLANKLINE>
 
     """
-    pass
+    
+    if(len(items) == 0):
+        return
+
+    print(f'You have {list_of_items(items)}.\n')
 
 
 def print_room(room):
@@ -119,9 +136,9 @@ def print_room(room):
     print(room["description"])
     print()
 
-    #
-    # COMPLETE ME!
-    #
+    # Display items in the room 
+    print_room_items(room)
+
 
 def exit_leads_to(exits, direction):
     """This function takes a dictionary of exits and a direction (a particular
@@ -190,11 +207,17 @@ def print_menu(exits, room_items, inv_items):
         # Print the exit name and where it leads to
         print_exit(direction, exit_leads_to(exits, direction))
 
-    #
-    # COMPLETE ME!
-    #
+    # Iterate over available take actions
+    for item in room_items:
+        # Print the exit name and where it leads to
+        print(f'TAKE {item["id"].upper()} to take {item["name"]}.')
+
+    # Iterate over available take actions
+    for item in inv_items:
+        # Print the exit name and where it leads to
+        print(f'DROP {item["id"].upper()} to drop your {item["name"]}.')
     
-    print("What do you want to do?")
+    print("What do you want to do?\n")
 
 
 def is_valid_exit(exits, chosen_exit):
