@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from typing import NoReturn
 from map import rooms
 from player import *
 from items import *
@@ -245,7 +246,28 @@ def execute_go(direction):
     (and prints the name of the room into which the player is
     moving). Otherwise, it prints "You cannot go there."
     """
-    pass
+    
+    global current_room
+
+    if(not (direction in current_room['exits'])):
+        return print('You cannot go there.')
+
+    current_room = move(current_room['exits'], direction)
+
+    print(f'You are in {current_room["name"]}.')
+
+
+def get_items_mass(items):
+    """This function takes items as an argument and returns the mass of 
+    all the items inside it"
+    """
+
+    mass = 0
+
+    for item in items:
+        mass += item['mass']
+
+    return mass
 
 
 def execute_take(item_id):
@@ -254,7 +276,27 @@ def execute_take(item_id):
     there is no such item in the room, this function prints
     "You cannot take that."
     """
-    pass
+
+    global inventory
+    selected_item = None
+
+    for item in current_room['items']:
+        if(item['id'] == item_id):
+            selected_item = item
+            break
+
+    if(selected_item == None):
+        return print('You cannot take that.')
+    
+    new_inventory = inventory
+    new_inventory.append(selected_item)
+    new_mass = get_items_mass(new_inventory)
+    if(new_mass > maximum_strength):
+        return print(f'You cannot take that. Your maximum strength is {maximum_strength}g \n\
+and this would bring it up to {new_mass}g.')
+
+    inventory = new_inventory
+    current_room['items'].remove(selected_item)
     
 
 def execute_drop(item_id):
@@ -262,7 +304,19 @@ def execute_drop(item_id):
     player's inventory to list of items in the current room. However, if there is
     no such item in the inventory, this function prints "You cannot drop that."
     """
-    pass
+
+    selected_item = None
+
+    for item in  inventory:
+        if(item['id'] == item_id):
+            selected_item = item
+            break
+
+    if(selected_item == None):
+        return print('You cannot drop that.')
+
+    current_room['items'].append(selected_item)
+    inventory.remove(selected_item)
     
 
 def execute_command(command):
@@ -344,6 +398,7 @@ def main():
         # Display game status (room description, inventory etc.)
         print_room(current_room)
         print_inventory_items(inventory)
+        print(f'Your inventory weighs {get_items_mass(inventory)}g.\n')
 
         # Show the menu with possible actions and ask the player
         command = menu(current_room["exits"], current_room["items"], inventory)
