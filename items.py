@@ -15,7 +15,7 @@ item_laptop = {
 
     "name": "laptop",
 
-    "mass": 1500,
+    "mass": 1000,
 
     "description":
     "It has seen better days. At least it has a WiFi card!"
@@ -37,27 +37,27 @@ item_biscuits = {
 
     "name": "a pack of biscuits",
 
-    "mass": 500,
+    "mass": 600,
 
     "description": "A pack of biscuits."
 }
 
 item_pen = {
     "id": "pen",
-    
+
     "name": "a pen",
 
-    "mass": 50,
+    "mass": 200,
 
     "description": "A basic ballpoint pen."
 }
 
 item_handbook = {
     "id": "handbook",
-    
+
     "name": "a student handbook",
 
-    "mass": 800,
+    "mass": 1000,
 
     "description": "This student handbook explains everything. Seriously."
 }

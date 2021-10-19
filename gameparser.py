@@ -38,10 +38,10 @@ def filter_words(words, skip_words):
                 break
         if(not is_skip_word):
             filtered_words.append(word)
-        
+
     return filtered_words
 
-    
+
 def remove_punct(text):
     """This function is used to remove all punctuation
     marks from a string. Spaces do not count as punctuation and should
@@ -92,7 +92,3 @@ def normalise_input(user_input):
     no_punct = remove_punct(user_input).lower()
 
     return filter_words(no_punct.split(), skip_words)
-
-    #
-    # COMPLETE ME!
-    #

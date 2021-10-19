@@ -1,11 +1,9 @@
 #!/usr/bin/python3
 
-from typing import NoReturn
 from map import rooms
 from player import *
 from items import *
 from gameparser import *
-
 
 
 def list_of_items(items):
@@ -25,7 +23,7 @@ def list_of_items(items):
     'money, a student handbook, laptop'
 
     """
-    
+
     items_list = ''
 
     for i, item in enumerate(items):
@@ -59,7 +57,7 @@ def print_room_items(room):
     Note: <BLANKLINE> here means that doctest should expect a blank line.
 
     """
-    
+
     if(len(room['items']) == 0):
         return
 
@@ -76,7 +74,7 @@ def print_inventory_items(items):
     <BLANKLINE>
 
     """
-    
+
     if(len(items) == 0):
         return
 
@@ -137,7 +135,7 @@ def print_room(room):
     print(room["description"])
     print()
 
-    # Display items in the room 
+    # Display items in the room
     print_room_items(room)
 
 
@@ -217,7 +215,7 @@ def print_menu(exits, room_items, inv_items):
     for item in inv_items:
         # Print the exit name and where it leads to
         print(f'DROP {item["id"].upper()} to drop your {item["name"]}.')
-    
+
     print("What do you want to do?\n")
 
 
@@ -246,13 +244,15 @@ def execute_go(direction):
     (and prints the name of the room into which the player is
     moving). Otherwise, it prints "You cannot go there."
     """
-    
+
     global current_room
 
-    if(not (direction in current_room['exits'])):
+    exits = current_room['exits']
+
+    if(not is_valid_exit(exits, direction)):
         return print('You cannot go there.')
 
-    current_room = move(current_room['exits'], direction)
+    current_room = move(exits, direction)
 
     print(f'You are in {current_room["name"]}.')
 
@@ -277,7 +277,6 @@ def execute_take(item_id):
     "You cannot take that."
     """
 
-    global inventory
     selected_item = None
 
     for item in current_room['items']:
@@ -287,17 +286,16 @@ def execute_take(item_id):
 
     if(selected_item == None):
         return print('You cannot take that.')
-    
-    new_inventory = inventory
-    new_inventory.append(selected_item)
-    new_mass = get_items_mass(new_inventory)
-    if(new_mass > maximum_strength):
-        return print(f'You cannot take that. Your maximum strength is {maximum_strength}g \n\
-and this would bring it up to {new_mass}g.')
 
-    inventory = new_inventory
+    mass = get_items_mass(inventory + [item])
+
+    if(mass > maximum_strength):
+        return print(f'You cannot take that. Your maximum strength is {maximum_strength / 1000}kg and\n\
+this would bring it up to {mass / 1000}kg.')
+
+    inventory.append(item)
     current_room['items'].remove(selected_item)
-    
+
 
 def execute_drop(item_id):
     """This function takes an item_id as an argument and moves this item from the
@@ -307,7 +305,7 @@ def execute_drop(item_id):
 
     selected_item = None
 
-    for item in  inventory:
+    for item in inventory:
         if(item['id'] == item_id):
             selected_item = item
             break
@@ -317,14 +315,13 @@ def execute_drop(item_id):
 
     current_room['items'].append(selected_item)
     inventory.remove(selected_item)
-    
+
 
 def execute_command(command):
     """This function takes a command (a list of words as returned by
     normalise_input) and, depending on the type of action (the first word of
     the command: "go", "take", or "drop"), executes either execute_go,
     execute_take, or execute_drop, supplying the second word as the argument.
-
     """
 
     if 0 == len(command):
@@ -393,12 +390,16 @@ def move(exits, direction):
 # This is the entry point of our program
 def main():
 
+    print('Welcome to my game. To complete it you must make sure every')
+    print('interactable object is brought to THE GENERAL OFFICE')
+    print('Good Luck ...\n')
+
     # Main game loop
     while True:
         # Display game status (room description, inventory etc.)
         print_room(current_room)
         print_inventory_items(inventory)
-        print(f'Your inventory weighs {get_items_mass(inventory)}g.\n')
+        print(f'Your inventory weighs {get_items_mass(inventory) / 1000}kg.\n')
 
         # Show the menu with possible actions and ask the player
         command = menu(current_room["exits"], current_room["items"], inventory)
@@ -406,6 +407,9 @@ def main():
         # Execute the player's command
         execute_command(command)
 
+        if(len(rooms['Office']['items']) == 6):
+            print('CONGRATULATIONS, YOU WIN!!!')
+            break
 
 
 # Are we being run as a script? If so, run main().
@@ -413,4 +417,3 @@ def main():
 # See https://docs.python.org/3.4/library/__main__.html for explanation
 if __name__ == "__main__":
     main()
-

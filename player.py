@@ -2,8 +2,7 @@ from items import *
 from map import rooms
 
 inventory = [item_id, item_laptop, item_money]
-
-maximum_strength = 3000
+maximum_strength = 1500
 
 # Start game at the reception
 current_room = rooms["Reception"]
